@@ -1,8 +1,14 @@
 import { db, firebaseBackup_db, resetDatabase } from "../models/db";
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
-// Firebase is loaded on demand so it stays out of the startup bundle
+// Firebase stays out of the startup bundle but is preloaded once the app is idle: Auth needs time to set up its
+// popup resolver, and initializing it on click delays signInWithPopup past the user gesture so the popup is blocked
 const loadFirebase = () => import("../utils/firebaseServices");
+if (typeof window !== "undefined") {
+  const preload = () => void loadFirebase();
+  if ("requestIdleCallback" in window) window.requestIdleCallback(preload);
+  else setTimeout(preload, 1000);
+}
 import useLocalStorage from "../actions";
 import { convertDate } from "./TinyChecklist";
 import { exportLegacyData } from "../data/legacy/exportLegacyData";
