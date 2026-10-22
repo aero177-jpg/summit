@@ -20,8 +20,10 @@ describe("creation input autofill semantics", () => {
     const input = screen.getByPlaceholderText(placeholder);
     expect(input).toHaveAttribute("type", "text");
     expect(input).toHaveAttribute("autocomplete", "off");
+    // A lone text field inside a <form> makes Chrome offer password/card autofill
+    expect(input.closest("form")).toBeNull();
     fireEvent.change(input, { target: { value: "Groceries" } });
-    fireEvent.submit(input.closest("form"));
+    fireEvent.keyDown(input, { key: "Enter" });
     expect(saveCB).toHaveBeenCalledWith({ title: "Groceries" });
     expect(input).toHaveValue("");
   });

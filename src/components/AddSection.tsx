@@ -53,7 +53,7 @@ export const AddSection: React.FC<{
     setSection({ ...section, sectionMode: "general", checkListMode: option.value });
   };
 
-  const blurOnEnter = (e) => {
+  const saveOnEnter = (e) => {
     if (e.key === "Enter") {
       saveChange(e);
     }
@@ -62,15 +62,17 @@ export const AddSection: React.FC<{
 
   return (
     <div className="addSectionInputs">
-      <form onSubmit={saveChange} className="itemContainer newItem inputWhite mt-3 flex p-1">
+      {/* Not a <form>: Chrome treats a lone text field in a form as a login form and offers password/card autofill */}
+      <div className="itemContainer newItem inputWhite mt-3 flex p-1">
         <input
           className=" itemTitleContainer"
           type="text"
           autoComplete="off"
+          enterKeyHint="done"
           autoFocus={true}
           value={section?.title ?? ""}
           onChange={(e) => setSection({ ...section, title: e.target.value })}
-          onSubmit={(e) => blurOnEnter(e)}
+          onKeyDown={saveOnEnter}
           placeholder={placeholder}
         />
         <div className="h-full flex items-center mx-1">
@@ -95,7 +97,7 @@ export const AddSection: React.FC<{
         >
           <ArrowIcon />
         </button>
-      </form>
+      </div>
 
       <div className="flex justify-between mt-2" style={{ gap: "3px" }}>
         <div className="w-3/4">
