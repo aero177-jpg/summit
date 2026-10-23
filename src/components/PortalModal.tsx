@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
+import { Capacitor } from "@capacitor/core";
 import { useTheme } from "../App";
 
 export default function PortalModal({ children, showModal, handleCloseCB, drawerStyle = undefined }) {
@@ -9,9 +10,18 @@ export default function PortalModal({ children, showModal, handleCloseCB, drawer
   const closeRef = useRef(handleCloseCB);
   closeRef.current = handleCloseCB;
 
-  // Give each open modal its own history entry so the Android back gesture closes the modal instead of leaving the app
+  // Close the modal with the Android back gesture instead of leaving the app
   useEffect(() => {
     if (!showModal) return;
+    const CloseWatcher = (window as any).CloseWatcher;
+    // In the Capacitor app the back button goes to the native listener in main.tsx, which uses history instead
+    if (CloseWatcher && !Capacitor.isNativePlatform()) {
+      // Browser close request: no history entry, so Chrome doesn't play its page-swipe animation
+      const watcher = new CloseWatcher();
+      watcher.onclose = () => closeRef.current(null);
+      return () => watcher.destroy();
+    }
+    // Fallback for browsers without CloseWatcher: give each open modal its own history entry
     window.history.pushState({ ...window.history.state, portalModalId: modalId }, "");
     let closedByBack = false;
     const handlePopState = () => {

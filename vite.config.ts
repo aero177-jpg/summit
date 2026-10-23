@@ -8,6 +8,8 @@ export default defineConfig({
     VitePWA({
       // Activate new service workers immediately so an installed app never stays on a stale or broken one
       registerType: "autoUpdate",
+      // Registered from main.tsx so the Capacitor app (which ships its files locally) never gets a service worker
+      injectRegister: false,
       includeManifestIcons: false,
       workbox: {
         globPatterns: ["**/*.{js,css,html,webmanifest,webp,jpg,png,svg,woff2}"],

@@ -17,15 +17,15 @@ describe("creation input autofill semantics", () => {
   ])("opts out of autofill for $placeholder without changing submission", ({ variant, placeholder }) => {
     const saveCB = vi.fn();
     render(<AddSection saveCB={saveCB} variant={variant} placeholder={placeholder} newSection={{ title: "" }} />);
-    const input = screen.getByPlaceholderText(placeholder);
-    expect(input).toHaveAttribute("type", "text");
-    expect(input).toHaveAttribute("autocomplete", "off");
-    // A lone text field inside a <form> makes Chrome offer password/card autofill
-    expect(input.closest("form")).toBeNull();
-    fireEvent.change(input, { target: { value: "Groceries" } });
+    // Chrome on Android offers password/card autofill on any <input>, so the title is a contenteditable textbox
+    const input = screen.getByRole("textbox", { name: placeholder });
+    expect(input.tagName).not.toBe("INPUT");
+    expect(input).toHaveAttribute("contenteditable", "plaintext-only");
+    input.textContent = "Groceries";
+    fireEvent.input(input);
     fireEvent.keyDown(input, { key: "Enter" });
     expect(saveCB).toHaveBeenCalledWith({ title: "Groceries" });
-    expect(input).toHaveValue("");
+    expect(input).toHaveTextContent("");
   });
 
   it("opts out of autofill for a new checklist item without changing submission", () => {

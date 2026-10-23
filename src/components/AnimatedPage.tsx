@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import treesImage from "../assets/hillswide.webp";
-import { App as CapacitorApp } from "@capacitor/app";
 
 const animations = {
   initial: { opacity: 1, x: 100 },
@@ -27,13 +26,6 @@ const AnimatedPage = ({ children }) => {
   const isCollectionPage = location.pathname.includes("collection");
   location;
 
-  CapacitorApp.addListener("backButton", ({ canGoBack }) => {
-    if (!canGoBack) {
-      CapacitorApp.exitApp();
-    } else {
-      window.history.back();
-    }
-  });
   // !isFresh ? "onlyFade" :
   return (
     <motion.div

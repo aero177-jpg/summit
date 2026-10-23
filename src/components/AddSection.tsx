@@ -18,6 +18,7 @@ import Dropdown from "./Dropdown";
 import TextareaAutoResize from "react-textarea-autosize";
 import ExpandableText from "./ExpandableText";
 import { Button } from "./Button";
+import PlainTextInput from "./PlainTextInput";
 
 export const AddSection: React.FC<{
   saveCB: any;
@@ -53,26 +54,15 @@ export const AddSection: React.FC<{
     setSection({ ...section, sectionMode: "general", checkListMode: option.value });
   };
 
-  const saveOnEnter = (e) => {
-    if (e.key === "Enter") {
-      saveChange(e);
-    }
-    return;
-  };
-
   return (
     <div className="addSectionInputs">
-      {/* Not a <form>: Chrome treats a lone text field in a form as a login form and offers password/card autofill */}
       <div className="itemContainer newItem inputWhite mt-3 flex p-1">
-        <input
-          className=" itemTitleContainer"
-          type="text"
-          autoComplete="off"
-          enterKeyHint="done"
-          autoFocus={true}
+        <PlainTextInput
+          className="itemTitleContainer"
+          autoFocus
           value={section?.title ?? ""}
-          onChange={(e) => setSection({ ...section, title: e.target.value })}
-          onKeyDown={saveOnEnter}
+          onChange={(title) => setSection({ ...section, title })}
+          onEnter={() => saveChange({ preventDefault() {} })}
           placeholder={placeholder}
         />
         <div className="h-full flex items-center mx-1">
